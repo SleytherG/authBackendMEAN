@@ -54,6 +54,7 @@ const crearUsuario = async ( req, res = response ) => {
             ok: true,
             uid: dbUser.id,
             name: name,
+            email: email,
             token: token
         })
 
@@ -101,6 +102,7 @@ const loginUsuario = async ( req, res = response ) => {
             ok: true,
             uid: dbUser.id,
             name: dbUser.name,
+            email: dbUser.email,
             token: token
         });
 
@@ -118,13 +120,17 @@ const loginUsuario = async ( req, res = response ) => {
  */
 const renewToken = async ( req, res = response ) => {
 
-    const { uid, name } = req;
+    const { uid } = req;
+    //Leer la base de datos
+    const dbUser = await Usuario.findById( uid );
 
-    const token = await generarJWT( uid, name );
+    // Generar el JWT
+    const token = await generarJWT( uid, dbUser.name );
 
     return res.json({
         ok: true,
-        name: name,
+        name: dbUser.name,
+        email: dbUser.email,
         uid: uid,
         token: token
     });
